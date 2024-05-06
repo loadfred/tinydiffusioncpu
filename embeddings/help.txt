@@ -1,0 +1,4 @@
+Place embeddings/textual inversions here
+.pt or .safetensors file extensions
+The filenames are what you put in your prompts to use the embeddings
+All embeddings placed here are loaded automatically

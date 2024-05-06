@@ -1,0 +1,2 @@
+Place models here
+.safetensors or .ckpt file extensions
