@@ -39,29 +39,35 @@ def cli():
 				f"\tNeg: {Config.neg_prompt[:40]}...",
 			"-2- Model",
 				f"\t{path.splitext(path.split(Config.model)[1])[0]}",
-			"-3- TCD/LCM (speed lora)",
+			"-3- Loras (enable/disable, edit weights)",
+				f"\tEnabled: {', '.join([path.splitext(path.split(i)[1])[0] for i in Config.lora_files])}",
+				f"\tWeights: {', '.join(map(str, Config.lora_weights))}",
+			"-4- TCD/LCM (speed lora)",
 				f"\t{str_mode}",
-			"-4- Generation Options (steps/cfg/eta/seed)",
+			"-5- Generation Options (steps/cfg/eta/seed)",
 				f"\t({Config.steps}/{Config.cfg}/{Config.eta}/{Config.seed})",
-			"-5- Image Size (width/height)",
+			"-6- Image Size (width/height)",
 				f"\t({Config.width}/{Config.height})",
-			"-6- Image Save Directory",
+			"-7- Image Save Directory",
 				f"\t{Config.save_dir}",
-			"-7- Config (save/reload)",
-			"-8- Exit",
+			"-8- Config (save/reload)",
+			"-9- Exit",
 		sep="\n")
 		while True:
 			choice = strict_input(int, 0, "Number (0): ")
 			match choice:
 				case 0:
-					try:
-						# sd 1.5 pipeline
-						txt2img.sd15()
-						# FIX THIS, allow user to keep program open to generate another image
-						print("Start again to generate another image")
-					except:
-						print("Invalid model")
-					exit()
+					if Config.model != "":
+						try:
+							# sd 1.5 pipeline
+							txt2img.sd15()
+							# FIX THIS, allow user to keep program open to generate another image
+							print("Start again to generate another image")
+						except:
+							print("Invalid model")
+						exit()
+					else:
+						print("Choose a model first")
 				case 1:
 					print(f"\nCurrent Positive: {Config.pos_prompt}")
 					print("[leave empty to keep current]")
@@ -78,13 +84,12 @@ def cli():
 					break
 				case 2:
 					models = []
+					print("-0- Enter Model Path [.safetensors, .ckpt]")
 					for subdir, dirs, files in walk(Config.model_dir):
 						for file in files:
 							if path.splitext(file)[1] in (".safetensors", ".ckpt"):
 								models.append(path.join(subdir, file))
-					print("-0- Enter Model Path [.safetensors, .ckpt]")
-					for i in range(1, len(models)+1):
-						print(f"-{i}- {path.splitext(path.split(models[i-1])[1])[0]}")
+								print(f"-{len(models)}- {path.splitext(file)[0]}")
 					print(f"-{len(models)+1}- Back")
 					while True:
 						choice = strict_input(int, 0, "Model (0): ")
@@ -100,9 +105,69 @@ def cli():
 							)
 							break
 						else:
+							# go back
 							break
 					break
 				case 3:
+					loras = []
+					print("-0- Enter Lora Path [.safetensors]")
+					for subdir, dirs, files in walk(Config.lora_dir):
+						# ignore subdir "special" which holds tcd/lcm loras
+						if subdir != path.join(Config.lora_dir, "special"):
+							for file in files:
+								if path.splitext(file)[1] == ".safetensors":
+									loras.append(path.join(subdir, file))
+									print(f"-{len(loras)}- {path.splitext(file)[0]}")
+					print(f"-{len(loras)+1}- Back")
+					while True:
+						choice = strict_input(int, 0, "Lora (0): ")
+						if choice < len(loras)+1 and choice > 0:
+							lora_path = loras[choice-1]
+						elif choice == 0:
+							lora_path = strict_input(
+								str, "",
+								"Enter Lora Path: "
+							)
+							if lora_path == "":
+								print("Empty input")
+								continue
+							elif not path.isfile(lora_path):
+								print("Lora doesn't exist")
+								continue
+							elif path.splitext(lora_path)[1] != ".safetensors":
+								print("Lora isn't .safetensors")
+								continue
+						else:
+							# go back
+							break
+						if lora_path in Config.lora_files:
+							print("Lora already in use")
+							yn = strict_input(
+								str, "n",
+								"Disable Lora? (y/N): "
+							)
+							lora_index = Config.lora_files.index(lora_path)
+							if yn.lower() in ("y", "yes", "certainly"):
+								Config.lora_weights.pop(lora_index)
+								Config.lora_files.pop(lora_index)
+								print(f"{path.splitext(path.split(lora_path)[1])[0]} disabled")
+								break
+							weight = strict_input(
+								float, Config.lora_weights[lora_index],
+								f"Edit Lora Weight ({Config.lora_weights[lora_index]}): "
+							)
+							Config.lora_weights[lora_index] = weight
+							break
+						else:
+							weight = strict_input(
+								float, Config.lora_default_weight,
+								f"Lora Weight ({Config.lora_default_weight}): "
+							)
+							Config.lora_files.append(lora_path)
+							Config.lora_weights.append(weight)
+							break
+					break
+				case 4:
 					print(
 						"-0- None [slow, 15-45 steps for quality]",
 						"-1- TCD [fast, a bit faster than LCM, better lighting, 4-8 steps for quality]",
@@ -113,7 +178,7 @@ def cli():
 						f"Mode ({Config.mode}): "
 					)
 					break
-				case 4:
+				case 5:
 					Config.steps = strict_input(
 						int, Config.steps,
 						f"Steps ({Config.steps}): "
@@ -131,7 +196,7 @@ def cli():
 						f"Seed [-1 is random] ({Config.seed}): "
 					)
 					break
-				case 5:
+				case 6:
 					Config.width = strict_input(
 						int, Config.width,
 						f"Width ({Config.width}): "
@@ -141,7 +206,7 @@ def cli():
 						f"Height ({Config.height}): "
 					)
 					break
-				case 6:
+				case 7:
 					print(f"\nCurrent: {Config.save_dir}")
 					print("[leave empty to keep current]")
 					Config.save_dir = strict_input(
@@ -149,7 +214,7 @@ def cli():
 						"Image Save Directory: "
 					)
 					break
-				case 7:
+				case 8:
 					print(
 						"-0- Save Config [loads on start]",
 						"-1- Reload Config",
@@ -164,7 +229,7 @@ def cli():
 						case _:
 							pass
 					break
-				case 8:
+				case 9:
 					exit()
 				case _:
 					print("Invalid choice")

@@ -32,8 +32,13 @@ class Config:
 
 	model = ""
 
+	lora_files = [] # strings
+	lora_weights = [] # floats
+	lora_default_weight = 0.8
+
 	# version = 1 # UNUSED 1=1.5, 2=2.1, 3=xl
 	mode = 1 # 0=none, 1=tcd, 2=lcm
+	special_weight = 1.0
 	tcd = path.join(lora_dir, "special", "tcd-sd15.safetensors")
 	lcm = path.join(lora_dir, "special", "lcm-sd15.safetensors")
 
@@ -74,8 +79,14 @@ def write_config():
 		"embeddings": path.join("${root}", "embeddings"),
 		"saves": Config.save_dir,
 	}
+	config["LORAS"] = {
+		"files": "\n".join(Config.lora_files),
+		"weights": "\n".join(map(str, Config.lora_weights)),
+		"default_weight": Config.lora_default_weight,
+	}
 	config["SPECIAL"] = {
 		"mode": Config.mode,
+		"weight": Config.special_weight,
 		"tcd": path.join("${PATHS:loras}", "special", "tcd-sd15.safetensors"),
 		"lcm": path.join("${PATHS:loras}", "special", "lcm-sd15.safetensors"),
 	}
@@ -138,9 +149,27 @@ def read_config():
 		Config.embed_dir = config.get("PATHS", "embeddings", fallback=Config.embed_dir)
 		Config.save_dir = config.get("PATHS", "saves", fallback=Config.save_dir)
 
+		Config.lora_default_weight = config.getfloat("LORAS", "default_weight", fallback=Config.lora_default_weight)
+		if config.get("LORAS", "files") != "":
+			save_me = False
+			# allow use of commas and quotes in LORAS files/weights config.ini list (they won't change anything)
+			Config.lora_files = config.get("LORAS", "files").replace(",", "").replace('"', "").replace("'", "").split("\n")
+			if config.get("LORAS", "weights") != "":
+				Config.lora_weights = [float(i) for i in config.get("LORAS", "weights").replace(",", "").replace('"', "").replace("'", "").split("\n")]
+			while len(Config.lora_files) > len(Config.lora_weights):
+				save_me = True
+				Config.lora_weights.append(Config.lora_default_weight)
+				print("More lora files than lora weights in config.ini, setting",
+					f"{path.splitext(path.split(Config.lora_files[len(Config.lora_weights)-1])[1])[0]}",
+					f"to {Config.lora_default_weight} weight")
+			if save_me:
+				# save config if default weight automatically added for lora
+				write_config()
+
 		Config.mode = config.getint("SPECIAL", "mode", fallback=Config.mode)
+		Config.special_weight = config.getfloat("SPECIAL", "weight", fallback=Config.special_weight)
 		Config.tcd = config.get("SPECIAL", "tcd", fallback=Config.tcd)
 		Config.lcm = config.get("SPECIAL", "lcm", fallback=Config.lcm)
 	except:
-		bad_config("Unknown ${key} in config.ini, check PATHS section")
+		bad_config("Missing [SECTION], unknown ${key}, or using a string where a number is expected in config.ini")
 		return

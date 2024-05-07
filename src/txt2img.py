@@ -4,6 +4,22 @@ from compel import Compel, DiffusersTextualInversionManager
 from os import path, walk
 from config import Config, set_save
 
+lora_names = []
+lora_weights = []
+
+def load_lora(pipe, file, weight):
+		wn = path.split(file)[1]
+		an = path.splitext(wn)[0]
+		pipe.load_lora_weights(
+			file,
+			weight_name = wn,
+			adapter_name = an,
+			local_files_only = Config.offline,
+		)
+		lora_names.append(an)
+		lora_weights.append(weight)
+		print(f"Loaded lora: {an} {weight}")
+
 
 def sd15():
 	pipe_args = {
@@ -32,23 +48,24 @@ def sd15():
 				from diffusers import TCDScheduler
 				pipe.scheduler = TCDScheduler.from_config(pipe.scheduler.config)
 				special_lora = Config.tcd
-				special_name = "tcd"
 			case 2:
 				from diffusers import LCMScheduler
 				pipe.scheduler = LCMScheduler.from_config(pipe.scheduler.config)
 				special_lora = Config.lcm
-				special_name = "lcm"
 			case _:
 				print("Invalid mode")
 				exit()
-		pipe.load_lora_weights(
-			special_lora,
-			weight_name = path.split(special_lora)[1],
-			adapter_name = special_name,
-			local_files_only = Config.offline,
-		)
-		pipe.fuse_lora(lora_scale=0.9)
-		print("Loaded special lora: " + path.split(special_lora)[1])
+		load_lora(pipe, special_lora, Config.special_weight)
+
+	if len(Config.lora_files) > 0:
+		for i in range(0, len(Config.lora_files)):
+			load_lora(pipe, Config.lora_files[i], Config.lora_weights[i])
+
+	if len(lora_weights) > 0:
+		pipe.set_adapters(lora_names, adapter_weights=lora_weights)
+		pipe.fuse_lora(adapter_names=lora_names, lora_scale=1.0)
+		pipe.unload_lora_weights()
+		print("Fused loras")
 
 	# freeu: said to improve looks w/ no extra cpu/ram
 	pipe.enable_freeu(s1=0.9, s2=0.2, b1=1.5, b2=1.6)
@@ -59,7 +76,7 @@ def sd15():
 			if path.splitext(file)[1] in (".safetensors", ".pt"):
 				# token = filename, call embedding in prompt w/ filename
 				pipe.load_textual_inversion(path.join(subdir, file), token=path.splitext(file)[0])
-				print("Loaded embedding: " + file)
+				print(f"Loaded embedding: {path.splitext(file)[0]}")
 
 	# compel weights in prompts: ()++ ()-- ()1.5
 	# conjunction to prompts: make use of commas
