@@ -23,7 +23,7 @@ This will install the python environment in tinydiffusioncpu/.env/, pip modules 
 Then it will act as a start script once everything is setup
 
 ## Features
-- Command Line Interface (CLI) only
+- Interactive command Line Interface (CLI) only
 - Stable Diffusion 1.5 support only
 - [Trajectory Consistency Distillation](https://github.com/jabir-zheng/TCD) (TCD) support
   - Faster than not having it
