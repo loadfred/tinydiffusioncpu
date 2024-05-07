@@ -54,14 +54,14 @@ def cli():
 			choice = strict_input(int, 0, "Number (0): ")
 			match choice:
 				case 0:
-					# sd 1.5 pipeline
 					try:
+						# sd 1.5 pipeline
 						txt2img.sd15()
 						# FIX THIS, allow user to keep program open to generate another image
 						print("Start again to generate another image")
-						exit()
 					except:
 						print("Invalid model")
+					exit()
 				case 1:
 					print(f"\nCurrent Positive: {Config.pos_prompt}")
 					print("[leave empty to keep current]")
