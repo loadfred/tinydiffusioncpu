@@ -22,6 +22,9 @@ This will install the python environment in tinydiffusioncpu/.env/, pip modules 
 
 Then it will act as a start script once everything is setup
 
+## Screenshot
+![cli screenshot](https://github.com/loadfred/tinydiffusioncpu/blob/main/docs/images/cli.webp)
+
 ## Features
 - Interactive command Line Interface (CLI) only
 - Stable Diffusion 1.5 support only
