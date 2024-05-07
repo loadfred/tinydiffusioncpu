@@ -1,6 +1,8 @@
 # TinyDiffusionCPU
 Stable Diffusion for CPU only, CLI only, uses [TCD](https://github.com/jabir-zheng/TCD), [LCM](https://github.com/luosiallen/latent-consistency-model), or neither, your choice
 
+Uses [Diffusers](https://huggingface.co/docs/diffusers/tutorials/tutorial_overview) with Python
+
 ## Dependencies
 - python 3.8 or greater
   - pip modules automatically installed with start.sh
