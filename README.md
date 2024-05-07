@@ -78,6 +78,7 @@ Then it will act as a start script once everything is setup
     - Choice, makes images safe for work
     - Downloads safety checker online if set to true
 - Config
+  - Automatically saved in configs folder when asked in CLI
   - .ini format
   - Ability to edit all options in the config file
   - Read on startup
@@ -85,3 +86,35 @@ Then it will act as a start script once everything is setup
 - Image Save Directory
   - Directory to save images
   - Defaults to your "Pictures" directory
+
+## configs/config.ini Example
+```
+[PROMPT]
+positive = masterpiece, 8k, smiling+, (woman sitting)1.3 on chair, asian---, forest, (yellow dress)++, black shoes, (sunrise)+++
+negative = FastNegativeV2+++,ugly, (bad face)++, small eyes, UnrealisticDream+++
+
+[OPTIONS]
+steps = 6
+cfg = 1.4
+eta = 0.3
+seed = -1
+width = 512
+height = 768
+safe = False
+offline = False
+
+[MODEL]
+model = /home/me/src/stable-diffusion/tinydiffusioncpu/models/dreamshaper_8.safetensors
+
+[PATHS]
+root = /home/me/src/stable-diffusion/tinydiffusioncpu
+models = ${root}/models
+loras = ${root}/loras
+embeddings = ${root}/embeddings
+saves = /home/me/Pictures/ai
+
+[SPECIAL]
+mode = 1
+tcd = ${PATHS:loras}/special/tcd-sd15.safetensors
+lcm = ${PATHS:loras}/special/lcm-sd15.safetensors
+```
