@@ -42,7 +42,11 @@ Then it will act as a start script once everything is setup
   - Place .safetensors/.ckpt in models folder
   - Choose from models in folder with the cli (it'll detect them) or enter full path
 - Loras
-  - Only TCD/LCM loras supported right now
+  - Stable Diffusion 1.5 TCD/LCM loras supported (installed with start.sh script)
+  - Place your .safetensors loras in the loras folder
+  - Choose from loras with the cli (automatically detected) or enter full path
+  - Enter lora weights, usually between 0.4 and 1.0
+  - Able to enable/disable/edit loras in use in cli
 - Embeddings (textual inversions)
   - Place .pt/.safetensors in embeddings folder
   - All embeddings automatically loaded, nothing else required

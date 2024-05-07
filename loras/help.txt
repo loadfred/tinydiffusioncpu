@@ -1,2 +1,3 @@
 Place loras here
-Currently loras can't be loaded yet
+.safetensors extension
+Automatically detected and showcased in interactive CLI

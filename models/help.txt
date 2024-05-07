@@ -1,2 +1,3 @@
 Place models here
 .safetensors or .ckpt file extensions
+Automatically detected and showcased in interactive CLI
