@@ -73,6 +73,9 @@ You can delete the other **start** script for the OS you're not using
   - All embeddings automatically loaded, nothing else required
   - Use embedding by typing the filename in positive prompt or negative prompt
     - e.g. embeddings/FastNegativeV2.pt -> *NEGATIVE PROMPT:* ugly, malformed body, FastNegativeV2, interlocked fingers
+- VAEs
+  - TAESD [(Tiny AutoEncoder for Stable Diffusion)](https://github.com/madebyollin/taesd)
+    - less memory/cpu, worse images & faces
 - Prompt Weighting
   - Uses [compel](https://github.com/damian0815/compel/blob/main/doc/syntax.md#weighting) + -
   - apple+ increases weight, sets weight to 1.1^n
@@ -156,6 +159,9 @@ mode = 1
 weight = 1.0
 tcd = ${PATHS:loras}/special/tcd-sd15.safetensors
 lcm = ${PATHS:loras}/special/lcm-sd15.safetensors
+
+[VAE]
+taesd = True
 ```
 
 ## Resource Usage
@@ -163,4 +169,4 @@ Most Stable Diffusion 1.5 models use around 5.7 Gi at 512x768 image width/height
 
 The time it takes to generate an image depends on your CPU, also the longer you use your CPU the slower it will get, allowing the CPU to relax helps speed up the next usage
 
-Memory/CPU usage can be lowered by setting the CFG to 1.0 or lower, not using loras, not using embeddings, lower image size (512x512), and by USING TCD or LCM at 4 steps
+Memory/CPU usage can be lowered by setting the CFG to 1.0 or lower, not using loras, not using embeddings, lower image size (512x512), by USING TCD or LCM at 4 steps, and ENABLE TAESD vae (less ram/cpu, worse images & faces)

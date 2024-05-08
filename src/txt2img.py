@@ -4,8 +4,10 @@ from compel import Compel, DiffusersTextualInversionManager
 from os import path, walk
 from config import Config, set_save
 
+
 lora_names = []
 lora_weights = []
+
 
 def load_lora(pipe, file, weight):
 		wn = path.split(file)[1]
@@ -22,6 +24,7 @@ def load_lora(pipe, file, weight):
 
 
 def sd15():
+
 	pipe_args = {
 		# "pretrained_model_or_path": Config.model, # AutoPipeline
 		# "pretrained_model_name_or_path": Config.model, # from_pretrained
@@ -34,6 +37,10 @@ def sd15():
 	# pipe = AutoPipelineForText2Image.from_pretrained(**pipe_args)
 	# pipe = StableDiffusionPipeline.from_pretrained(**pipe_args)
 	pipe = StableDiffusionPipeline.from_single_file(**pipe_args)
+
+	if Config.vae_taesd:
+		from diffusers import AutoencoderTiny
+		pipe.vae = AutoencoderTiny.from_pretrained("madebyollin/taesd", torch_dtype=torch.float32)
 
 	# said to decrease memory usage
 	pipe.unet.to(memory_format=torch.channels_last)

@@ -36,11 +36,12 @@ class Config:
 	lora_weights = [] # floats
 	lora_default_weight = 0.8
 
-	# version = 1 # UNUSED 1=1.5, 2=2.1, 3=xl
 	mode = 1 # 0=none, 1=tcd, 2=lcm
 	special_weight = 1.0
 	tcd = path.join(lora_dir, "special", "tcd-sd15.safetensors")
 	lcm = path.join(lora_dir, "special", "lcm-sd15.safetensors")
+
+	vae_taesd = False # faster, worse images
 
 
 def set_save():
@@ -90,6 +91,9 @@ def write_config():
 		"tcd": path.join("${PATHS:loras}", "special", "tcd-sd15.safetensors"),
 		"lcm": path.join("${PATHS:loras}", "special", "lcm-sd15.safetensors"),
 	}
+	config["VAE"] = {
+		"taesd": Config.vae_taesd,
+	}
 
 	if path.isfile(config_file):
 		rename(config_file, path.join(Config.root_dir, "configs", "config.ini.bak"))
@@ -125,7 +129,7 @@ def read_config():
 
 	try:
 		config.read(config_file)
-	except:
+	except Exception:
 		bad_config("Can't read config.ini, bad formatting")
 		return
 	try:
@@ -170,6 +174,8 @@ def read_config():
 		Config.special_weight = config.getfloat("SPECIAL", "weight", fallback=Config.special_weight)
 		Config.tcd = config.get("SPECIAL", "tcd", fallback=Config.tcd)
 		Config.lcm = config.get("SPECIAL", "lcm", fallback=Config.lcm)
-	except:
+
+		Config.vae_taesd = config.get("VAE", "taesd", fallback=Config.vae_taesd)
+	except Exception:
 		bad_config("Missing [SECTION], unknown ${key}, or using a string where a number is expected in config.ini")
 		return

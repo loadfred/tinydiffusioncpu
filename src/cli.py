@@ -15,7 +15,7 @@ def strict_input(
 		else:
 			value = value_type(value_default)
 			print("Default chosen")
-	except:
+	except Exception:
 		value = value_type(value_default)
 		print("Default chosen")
 	return value
@@ -44,14 +44,16 @@ def cli():
 				f"\tWeights: {', '.join(map(str, Config.lora_weights))}",
 			"-4- TCD/LCM (speed lora)",
 				f"\t{str_mode}",
-			"-5- Generation Options (steps/cfg/eta/seed)",
+			"-5- VAE (taesd)",
+				f"\tTAESD: {Config.vae_taesd}",
+			"-6- Generation Options (steps/cfg/eta/seed)",
 				f"\t({Config.steps}/{Config.cfg}/{Config.eta}/{Config.seed})",
-			"-6- Image Size (width/height)",
+			"-7- Image Size (width/height)",
 				f"\t({Config.width}/{Config.height})",
-			"-7- Image Save Directory",
+			"-8- Image Save Directory",
 				f"\t{Config.save_dir}",
-			"-8- Config (save/reload)",
-			"-9- Exit",
+			"-9- Config (save/reload)",
+			"-10- Exit",
 		sep="\n")
 		while True:
 			choice = strict_input(int, 0, "Number (0): ")
@@ -63,7 +65,7 @@ def cli():
 							txt2img.sd15()
 							# FIX THIS, allow user to keep program open to generate another image
 							print("Start again to generate another image")
-						except:
+						except Exception:
 							print("Invalid model")
 						exit()
 					else:
@@ -179,6 +181,30 @@ def cli():
 					)
 					break
 				case 5:
+					print(
+						"-0- TAESD (less ram, faster, worse images, bad faces)",
+						"-1- Back",
+					sep="\n")
+					choice = strict_input(int, 0, "Number (0): ")
+					match choice:
+						case 0:
+							if not Config.vae_taesd:
+								yn = strict_input(
+									str, "y",
+									"Enable TAESD (Y/n): "
+								)
+							else:
+								yn = strict_input(
+									str, "y",
+									"Disable TAESD (Y/n): "
+								)
+							if yn.lower() in ("", "y", "yes", "certainly"):
+								Config.vae_taesd = not Config.vae_taesd
+						case _:
+							# go back
+							break
+					break
+				case 6:
 					Config.steps = strict_input(
 						int, Config.steps,
 						f"Steps ({Config.steps}): "
@@ -196,7 +222,7 @@ def cli():
 						f"Seed [-1 is random] ({Config.seed}): "
 					)
 					break
-				case 6:
+				case 7:
 					Config.width = strict_input(
 						int, Config.width,
 						f"Width ({Config.width}): "
@@ -206,7 +232,7 @@ def cli():
 						f"Height ({Config.height}): "
 					)
 					break
-				case 7:
+				case 8:
 					print(f"\nCurrent: {Config.save_dir}")
 					print("[leave empty to keep current]")
 					Config.save_dir = strict_input(
@@ -214,7 +240,7 @@ def cli():
 						"Image Save Directory: "
 					)
 					break
-				case 8:
+				case 9:
 					print(
 						"-0- Save Config [loads on start]",
 						"-1- Reload Config",
@@ -226,10 +252,8 @@ def cli():
 							write_config()
 						case 1:
 							read_config()
-						case _:
-							pass
 					break
-				case 9:
+				case 10:
 					exit()
 				case _:
 					print("Invalid choice")
