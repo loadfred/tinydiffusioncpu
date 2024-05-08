@@ -6,21 +6,39 @@ Uses [Diffusers](https://huggingface.co/docs/diffusers/tutorials/tutorial_overvi
 ## Dependencies
 - python 3.8 or greater
   - pip modules automatically installed with start.sh
-- wget
+- curl
   - used for downloading TCD/LCM safetensors with start.sh
+- git
+  - used to clone this repository
  
 ## Install & Run
-Currently Linux & FreeBSD only (just need a .bat file for Windows)
+Windows + Linux + FreeBSD support!
+
+Open your terminal
 
 `git clone https://github.com/loadfred/tinydiffusioncpu.git`
 
-Enter the directory and execute the start.sh script
+Enter the **tinydiffusioncpu** directory cloned
+
+`cd tinydiffusioncpu`
+
+Then execute the **start** script
+
+### Windows
+
+`start.bat`
+
+### Linux & FreeBSD
 
 `./start.sh`
 
-This will install the python environment in tinydiffusioncpu/.env/, pip modules from requirements.txt, and then the TCD/LCM loras if you approve (1.4 G)
+If it's not running make sure it's executable (chmod +x ./start.sh)
+
+This will install the python environment in tinydiffusioncpu/.env/, pip modules from requirements.txt, and then the TCD/LCM loras if you approve (1.4 Gi total)
 
 Then it will act as a start script once everything is setup
+
+You can delete the other start script for the OS you're not using
 
 ## Screenshot
 ![cli screenshot](https://github.com/loadfred/tinydiffusioncpu/blob/main/docs/images/cli.webp)

@@ -2,7 +2,7 @@
 BASEDIR=$(dirname "$0")
 PYTHON=python3
 # DIFFUSERS OPTIONS
-# HF_HUB_OFFLINE=True
+HF_HUB_OFFLINE=True
 DISABLE_TELEMETRY=YES
 
 if [ ! -d "$BASEDIR/.env" ] ; then
@@ -19,7 +19,7 @@ if [ ! -d "$BASEDIR/.env" ] ; then
 			[nN])
 				break;;
 			*)
-				wget https://huggingface.co/h1t/TCD-SD15-LoRA/resolve/main/pytorch_lora_weights.safetensors?download=true -O "$BASEDIR/loras/special/tcd-sd15.safetensors"
+				curl -o "$BASEDIR/loras/special/tcd-sd15.safetensors" -L https://huggingface.co/h1t/TCD-SD15-LoRA/resolve/main/pytorch_lora_weights.safetensors?download=true
 		esac
 	fi
 
@@ -30,7 +30,7 @@ if [ ! -d "$BASEDIR/.env" ] ; then
 			[nN])
 				break;;
 			*)
-				wget https://huggingface.co/latent-consistency/lcm-lora-sdv1-5/resolve/main/pytorch_lora_weights.safetensors?download=true -O "$BASEDIR/loras/special/lcm-sd15.safetensors"
+				curl -o "$BASEDIR/loras/special/lcm-sd15.safetensors" -L https://huggingface.co/latent-consistency/lcm-lora-sdv1-5/resolve/main/pytorch_lora_weights.safetensors?download=true
 		esac
 	fi
 
