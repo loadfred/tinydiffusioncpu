@@ -78,6 +78,8 @@ Then it will act as a start script once everything is setup
   - Seed
     - -1 is random
   - Image width / height
+    - 256, 512, 768, 1024 sizes supported (width or height)
+    - most SD 1.5 models work well with 512x512 or 512x768
   - Safety Checker
     - Choice, makes images safe for work
     - Downloads safety checker online if set to true
@@ -92,10 +94,12 @@ Then it will act as a start script once everything is setup
   - Defaults to your "Pictures" directory
 
 ## configs/config.ini Example
+(not a good lora combo or prompt, just a config example)
+
 ```
 [PROMPT]
-positive = masterpiece, 8k, smiling+, (woman sitting)1.3 on chair, asian---, forest, (yellow dress)++, black shoes, (sunrise)+++
-negative = FastNegativeV2+++,ugly, (bad face)++, small eyes, UnrealisticDream+++
+positive = (ghibli style)++,8k,bangs,cape,nature+,looking at viewer,necklace+,masterpiece,green eyes,3DMM+++
+negative = FastNegativeV2++,easynegative+,ugly
 
 [OPTIONS]
 steps = 6
@@ -108,7 +112,7 @@ safe = False
 offline = False
 
 [MODEL]
-model = /home/me/src/stable-diffusion/tinydiffusioncpu/models/dreamshaper_8.safetensors
+model = /home/me/src/stable-diffusion/tinydiffusioncpu/models/anime/AnythingXL_inkBase.safetensors
 
 [PATHS]
 root = /home/me/src/stable-diffusion/tinydiffusioncpu
@@ -117,8 +121,25 @@ loras = ${root}/loras
 embeddings = ${root}/embeddings
 saves = /home/me/Pictures/ai
 
+[LORAS]
+files = /home/me/src/stable-diffusion/tinydiffusioncpu/loras/add_detail.safetensors
+	/home/me/src/stable-diffusion/tinydiffusioncpu/loras/anime/ghibli_style_offset.safetensors
+	/home/me/src/stable-diffusion/tinydiffusioncpu/loras/3DMM_V12.safetensors
+weights = -1.5
+	0.9
+	1.0
+default_weight = 0.8
+
 [SPECIAL]
 mode = 1
+weight = 1.0
 tcd = ${PATHS:loras}/special/tcd-sd15.safetensors
 lcm = ${PATHS:loras}/special/lcm-sd15.safetensors
 ```
+
+## Resource Usage
+Most Stable Diffusion 1.5 models use around 5.7 Gi at 512x768 image width/height + 1.4 CFG + loras + embeddings
+
+The time it takes to generate an image depends on your CPU, also the longer you use your CPU the slower it will get, allowing the CPU to relax helps speed up the next usage
+
+Memory/CPU usage can be lowered by setting the CFG to 1.0 or lower, not using loras, not using embeddings, lower image size (512x512), and USING TCD or LCM
