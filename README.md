@@ -5,9 +5,9 @@ Uses [Diffusers](https://huggingface.co/docs/diffusers/tutorials/tutorial_overvi
 
 ## Dependencies
 - python 3.8 or greater
-  - pip modules automatically installed with start.sh
+  - pip modules automatically installed with **start** script
 - curl
-  - used for downloading TCD/LCM safetensors with start.sh
+  - used for downloading TCD/LCM safetensors with **start** script
 - git
   - used to clone this repository
  
@@ -36,9 +36,9 @@ If it's not running make sure it's executable (chmod +x ./start.sh)
 
 This will install the python environment in tinydiffusioncpu/.env/, pip modules from requirements.txt, and then the TCD/LCM loras if you approve (1.4 Gi total)
 
-Then it will act as a start script once everything is setup
+Then it will act as a **start** script once everything is setup
 
-You can delete the other start script for the OS you're not using
+You can delete the other **start** script for the OS you're not using
 
 ## Screenshot
 ![cli screenshot](https://github.com/loadfred/tinydiffusioncpu/blob/main/docs/images/cli.webp)
@@ -60,7 +60,7 @@ You can delete the other start script for the OS you're not using
   - Place .safetensors/.ckpt in models folder
   - Choose from models in folder with the cli (it'll detect them) or enter full path
 - Loras
-  - Stable Diffusion 1.5 TCD/LCM loras supported (installed with start.sh script)
+  - Stable Diffusion 1.5 TCD/LCM loras supported (installed with **start** script)
   - Place your .safetensors loras in the loras folder
   - Choose from loras with the cli (automatically detected) or enter full path
   - Enter lora weights, usually between 0.4 and 1.0
