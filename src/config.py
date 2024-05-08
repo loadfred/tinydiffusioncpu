@@ -9,6 +9,7 @@ class Config:
 	model_dir = path.join(root_dir, "models")
 	lora_dir = path.join(root_dir, "loras") # ONLY USED FOR TCD/LCM, NO OTHER LORA SUPPORT
 	embed_dir = path.join(root_dir, "embeddings")
+	vae_dir = path.join(root_dir, "vaes")
 
 	save_dir = path.join(path.expanduser("~"), "Pictures")
 	save_name = ""
@@ -42,6 +43,7 @@ class Config:
 	lcm = path.join(lora_dir, "special", "lcm-sd15.safetensors")
 
 	vae_taesd = False # faster, worse images
+	vae = "" # vae file location
 
 
 def set_save():
@@ -78,6 +80,7 @@ def write_config():
 		"models": path.join("${root}", "models"),
 		"loras": path.join("${root}", "loras"),
 		"embeddings": path.join("${root}", "embeddings"),
+		"vaes": path.join("${root}", "vaes"),
 		"saves": Config.save_dir,
 	}
 	config["LORAS"] = {
@@ -93,6 +96,7 @@ def write_config():
 	}
 	config["VAE"] = {
 		"taesd": Config.vae_taesd,
+		"vae": Config.vae,
 	}
 
 	if path.isfile(config_file):
@@ -151,6 +155,7 @@ def read_config():
 		Config.model_dir = config.get("PATHS", "models", fallback=Config.model_dir)
 		Config.lora_dir = config.get("PATHS", "loras", fallback=Config.lora_dir)
 		Config.embed_dir = config.get("PATHS", "embeddings", fallback=Config.embed_dir)
+		Config.vae_dir = config.get("PATHS", "vaes", fallback=Config.vae_dir)
 		Config.save_dir = config.get("PATHS", "saves", fallback=Config.save_dir)
 
 		Config.lora_default_weight = config.getfloat("LORAS", "default_weight", fallback=Config.lora_default_weight)
@@ -176,6 +181,7 @@ def read_config():
 		Config.lcm = config.get("SPECIAL", "lcm", fallback=Config.lcm)
 
 		Config.vae_taesd = config.get("VAE", "taesd", fallback=Config.vae_taesd)
+		Config.vae = config.get("VAE", "vae", fallback=Config.vae)
 	except Exception:
 		bad_config("Missing [SECTION], unknown ${key}, or using a string where a number is expected in config.ini")
 		return

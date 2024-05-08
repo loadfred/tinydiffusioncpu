@@ -41,6 +41,11 @@ def sd15():
 	if Config.vae_taesd:
 		from diffusers import AutoencoderTiny
 		pipe.vae = AutoencoderTiny.from_pretrained("madebyollin/taesd", torch_dtype=torch.float32)
+		print("Set VAE: TAESD")
+	elif Config.vae != "":
+		from diffusers import AutoencoderKL
+		pipe.vae = AutoencoderKL.from_single_file(Config.vae, torch_dtype=torch.float32)
+		print(f"Set VAE: {path.splitext(path.split(Config.vae)[1])[0]}")
 
 	# said to decrease memory usage
 	pipe.unet.to(memory_format=torch.channels_last)

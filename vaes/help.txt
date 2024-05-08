@@ -1,0 +1,4 @@
+Place VAEs here
+.pt or .safetensors file extensions
+All VAEs searched for in this folder
+TAESD vae is downloaded online and put in .cache when enabled

@@ -33,26 +33,27 @@ def cli():
 				str_mode = "None"
 		print(
 			"",
-			"-0- GENERATE IMAGE",
-			"-1- Prompt (pos/neg)",
+			"-0-- GENERATE IMAGE",
+			"-1-- Prompt (pos/neg)",
 				f"\tPos: {Config.pos_prompt[:40]}...",
 				f"\tNeg: {Config.neg_prompt[:40]}...",
-			"-2- Model",
+			"-2-- Model",
 				f"\t{path.splitext(path.split(Config.model)[1])[0]}",
-			"-3- Loras (enable/disable, edit weights)",
+			"-3-- Loras (enable/disable, edit weights)",
 				f"\tEnabled: {', '.join([path.splitext(path.split(i)[1])[0] for i in Config.lora_files])}",
 				f"\tWeights: {', '.join(map(str, Config.lora_weights))}",
-			"-4- TCD/LCM (speed lora)",
+			"-4-- TCD/LCM (speed lora)",
 				f"\t{str_mode}",
-			"-5- VAE (taesd)",
+			"-5-- VAE",
 				f"\tTAESD: {Config.vae_taesd}",
-			"-6- Generation Options (steps/cfg/eta/seed)",
+				f"\tVAE: {path.splitext(path.split(Config.vae)[1])[0]}",
+			"-6-- Generation Options (steps/cfg/eta/seed)",
 				f"\t({Config.steps}/{Config.cfg}/{Config.eta}/{Config.seed})",
-			"-7- Image Size (width/height)",
+			"-7-- Image Size (width/height)",
 				f"\t({Config.width}/{Config.height})",
-			"-8- Image Save Directory",
+			"-8-- Image Save Directory",
 				f"\t{Config.save_dir}",
-			"-9- Config (save/reload)",
+			"-9-- Config (save/reload)",
 			"-10- Exit",
 		sep="\n")
 		while True:
@@ -101,10 +102,20 @@ def cli():
 						elif choice == 0:
 							print(f"\nCurrent: {Config.model}")
 							print("[leave empty to keep current]")
-							Config.model = strict_input(
+							model_path = strict_input(
 								str, Config.model,
 								"Enter Model Path: "
 							)
+							if model_path == "":
+								print("Empty input")
+								continue
+							elif not path.isfile(model_path):
+								print("Model doesn't exist")
+								continue
+							elif path.splitext(model_path)[1] not in (".safetensors", ".ckpt"):
+								print("Model isn't .safetensors or .ckpt")
+								continue
+							Config.model = model_path
 							break
 						else:
 							# go back
@@ -120,7 +131,8 @@ def cli():
 								if path.splitext(file)[1] == ".safetensors":
 									loras.append(path.join(subdir, file))
 									print(f"-{len(loras)}- {path.splitext(file)[0]}")
-					print(f"-{len(loras)+1}- Back")
+					print(f"-{len(loras)+1}- DISABLE all active loras")
+					print(f"-{len(loras)+2}- Back")
 					while True:
 						choice = strict_input(int, 0, "Lora (0): ")
 						if choice < len(loras)+1 and choice > 0:
@@ -139,6 +151,11 @@ def cli():
 							elif path.splitext(lora_path)[1] != ".safetensors":
 								print("Lora isn't .safetensors")
 								continue
+						elif choice == len(loras)+1:
+							# disable all loras
+							Config.lora_files = []
+							Config.lora_weights = []
+							break
 						else:
 							# go back
 							break
@@ -181,26 +198,62 @@ def cli():
 					)
 					break
 				case 5:
+					vaes = []
 					print(
-						"-0- TAESD (less ram, faster, worse images, bad faces)",
-						"-1- Back",
+						"-0- Enter VAE path [.safetensors, .pt]",
+						"-1- TAESD (less ram, faster, worse images, bad faces",
 					sep="\n")
-					choice = strict_input(int, 0, "Number (0): ")
-					match choice:
-						case 0:
+					for subdir, dirs, files in walk(Config.vae_dir):
+						for file in files:
+							if path.splitext(file)[1] in (".safetensors", ".pt"):
+								vaes.append(path.join(subdir, file))
+								print(f"-{len(vaes)+1}- {path.splitext(file)[0]}")
+					print(f"-{len(vaes)+2}- DISABLE active VAE")
+					print(f"-{len(vaes)+3}- Back")
+					while True:
+						choice = strict_input(int, 1, "VAE (1): ")
+						if choice < len(vaes)+2 and choice > 1:
+							Config.vae = vaes[choice-2]
+							break
+						elif choice == 1:
 							if not Config.vae_taesd:
 								yn = strict_input(
 									str, "y",
 									"Enable TAESD (Y/n): "
 								)
 							else:
+								print("TAESD already in use")
 								yn = strict_input(
 									str, "y",
 									"Disable TAESD (Y/n): "
 								)
 							if yn.lower() in ("", "y", "yes", "certainly"):
 								Config.vae_taesd = not Config.vae_taesd
-						case _:
+							break
+						elif choice == 0:
+							print(f"\nCurrent: {Config.vae}")
+							print("[leave empty to keep current]")
+							vae_path = strict_input(
+								str, Config.vae,
+								"Enter VAE Path: "
+							)
+							if vae_path == "":
+								print("Empty input")
+								continue
+							elif not path.isfile(vae_path):
+								print("VAE doesn't exist")
+								continue
+							elif path.splitext(vae_path)[1] not in (".safetensors", ".pt"):
+								print("VAE isn't .safetensors or .pt")
+								continue
+							Config.vae = vae_path
+							break
+						elif choice == len(vaes)+2:
+							# disable vae
+							Config.vae_taesd = False
+							Config.vae = ""
+							break
+						else:
 							# go back
 							break
 					break
