@@ -59,12 +59,15 @@ You can delete the other **start** script for the OS you're not using
 - Models
   - Place .safetensors/.ckpt in models folder
   - Choose from models in folder with the cli (it'll detect them) or enter full path
+  - You can create subdirectories in the "models" folder and they'll still be searched through for model choosing
 - Loras
   - Stable Diffusion 1.5 TCD/LCM loras supported (installed with **start** script)
   - Place your .safetensors loras in the loras folder
   - Choose from loras with the cli (automatically detected) or enter full path
   - Enter lora weights, usually between 0.4 and 1.0
   - Able to enable/disable/edit loras in use in cli
+  - You can create subdirectories in the "loras" folder and they'll still be searched through for lora choosing
+  - "special" directory is ignored, it contains the tcd/lcm loras
 - Embeddings (textual inversions)
   - Place .pt/.safetensors in embeddings folder
   - All embeddings automatically loaded, nothing else required
@@ -160,4 +163,4 @@ Most Stable Diffusion 1.5 models use around 5.7 Gi at 512x768 image width/height
 
 The time it takes to generate an image depends on your CPU, also the longer you use your CPU the slower it will get, allowing the CPU to relax helps speed up the next usage
 
-Memory/CPU usage can be lowered by setting the CFG to 1.0 or lower, not using loras, not using embeddings, lower image size (512x512), and USING TCD or LCM
+Memory/CPU usage can be lowered by setting the CFG to 1.0 or lower, not using loras, not using embeddings, lower image size (512x512), and by USING TCD or LCM at 4 steps
