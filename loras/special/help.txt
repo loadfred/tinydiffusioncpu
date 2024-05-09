@@ -1,6 +1,11 @@
 Place TCD/LCM loras here
-Currently only stable diffusion 1.5 TCD/LCM loras can be used
+Currently only stable diffusion 1.5 TCD/LCM loras can be used (because only stable diffusion 1.5 models can be used)
+
+DOWNLOAD: (if you don't have them already)
 TCD LORA
-wget https://huggingface.co/h1t/TCD-SD15-LoRA/resolve/main/pytorch_lora_weights.safetensors?download=true -O tcd-sd15.safetensors
+curl -o tcd-sd15.safetensors -L https://huggingface.co/h1t/TCD-SD15-LoRA/resolve/main/pytorch_lora_weights.safetensors?download=true
 LCM LORA
-wget https://huggingface.co/latent-consistency/lcm-lora-sdv1-5/resolve/main/pytorch_lora_weights.safetensors?download=true -O lcm-sd15.safetensors
+curl -o lcm-sd15.safetensors -L https://huggingface.co/latent-consistency/lcm-lora-sdv1-5/resolve/main/pytorch_lora_weights.safetensors?download=true
+
+Make sure the tcd/lcm loras are placed here for them to work
+They have to be named as tcd-sd15.safetensors and lcm-sd15.safetensors
