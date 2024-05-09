@@ -38,7 +38,7 @@ def sd15():
 	# pipe = StableDiffusionPipeline.from_pretrained(**pipe_args)
 	pipe = StableDiffusionPipeline.from_single_file(**pipe_args)
 
-	if Config.vae_taesd == True:
+	if Config.vae_taesd:
 		from diffusers import AutoencoderTiny
 		pipe.vae = AutoencoderTiny.from_pretrained("madebyollin/taesd", torch_dtype=torch.float32)
 		print("Set VAE: TAESD")
@@ -85,7 +85,7 @@ def sd15():
 	# load ALL embeddings
 	for subdir, dirs, files in walk(Config.embed_dir):
 		for file in files:
-			if path.splitext(file)[1] in (".safetensors", ".pt"):
+			if path.splitext(file)[1] in Config.extensions:
 				# token = filename, call embedding in prompt w/ filename
 				pipe.load_textual_inversion(path.join(subdir, file), token=path.splitext(file)[0])
 				print(f"Loaded embedding: {path.splitext(file)[0]}")

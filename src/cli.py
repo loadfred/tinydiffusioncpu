@@ -23,6 +23,7 @@ def strict_input(
 
 def cli():
 	read_config()
+	extensions = "[" + ", ".join(Config.extensions) + "]" # extensions STRING
 	while True:
 		match Config.mode:
 			case 1:
@@ -87,10 +88,10 @@ def cli():
 					break
 				case 2:
 					models = []
-					print("-0- Enter Model Path [.safetensors, .ckpt]")
+					print(f"-0- Enter Model Path {extensions}")
 					for subdir, dirs, files in walk(Config.model_dir):
 						for file in files:
-							if path.splitext(file)[1] in (".safetensors", ".ckpt"):
+							if path.splitext(file)[1] in Config.extensions:
 								models.append(path.join(subdir, file))
 								print(f"-{len(models)}- {path.splitext(file)[0]}")
 					print(f"-{len(models)+1}- Back")
@@ -112,8 +113,8 @@ def cli():
 							elif not path.isfile(model_path):
 								print("Model doesn't exist")
 								continue
-							elif path.splitext(model_path)[1] not in (".safetensors", ".ckpt"):
-								print("Model isn't .safetensors or .ckpt")
+							elif path.splitext(model_path)[1] not in Config.extensions:
+								print(f"Model isn't {extensions}")
 								continue
 							Config.model = model_path
 							break
@@ -123,12 +124,12 @@ def cli():
 					break
 				case 3:
 					loras = []
-					print("-0- Enter Lora Path [.safetensors]")
+					print(f"-0- Enter Lora Path {extensions}")
 					for subdir, dirs, files in walk(Config.lora_dir):
 						# ignore subdir "special" which holds tcd/lcm loras
 						if subdir != path.join(Config.lora_dir, "special"):
 							for file in files:
-								if path.splitext(file)[1] == ".safetensors":
+								if path.splitext(file)[1] in Config.extensions:
 									loras.append(path.join(subdir, file))
 									print(f"-{len(loras)}- {path.splitext(file)[0]}")
 					print(f"-{len(loras)+1}- DISABLE all active loras")
@@ -148,8 +149,8 @@ def cli():
 							elif not path.isfile(lora_path):
 								print("Lora doesn't exist")
 								continue
-							elif path.splitext(lora_path)[1] != ".safetensors":
-								print("Lora isn't .safetensors")
+							elif path.splitext(lora_path)[1] not in Config.extensions:
+								print(f"Lora isn't {extensions}")
 								continue
 						elif choice == len(loras)+1:
 							# disable all loras
@@ -200,12 +201,12 @@ def cli():
 				case 5:
 					vaes = []
 					print(
-						"-0- Enter VAE path [.safetensors, .pt, .ckpt]",
+						f"-0- Enter VAE path {extensions}",
 						"-1- TAESD (less ram, faster, worse images, bad faces",
 					sep="\n")
 					for subdir, dirs, files in walk(Config.vae_dir):
 						for file in files:
-							if path.splitext(file)[1] in (".safetensors", ".pt", ".ckpt"):
+							if path.splitext(file)[1] in Config.extensions:
 								vaes.append(path.join(subdir, file))
 								print(f"-{len(vaes)+1}- {path.splitext(file)[0]}")
 					print(f"-{len(vaes)+2}- DISABLE active VAE")
@@ -216,7 +217,7 @@ def cli():
 							Config.vae = vaes[choice-2]
 							break
 						elif choice == 1:
-							if Config.vae_taesd == False:
+							if not Config.vae_taesd:
 								yn = strict_input(
 									str, "y",
 									"Enable TAESD (Y/n): "
@@ -243,8 +244,8 @@ def cli():
 							elif not path.isfile(vae_path):
 								print("VAE doesn't exist")
 								continue
-							elif path.splitext(vae_path)[1] not in (".safetensors", ".pt", ".ckpt"):
-								print("VAE isn't .safetensors, .pt, or .ckpt")
+							elif path.splitext(vae_path)[1] not in Config.extensions:
+								print(f"VAE isn't {extensions}")
 								continue
 							Config.vae = vae_path
 							break

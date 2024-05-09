@@ -148,6 +148,9 @@ loras = ${root}/loras
 embeddings = ${root}/embeddings
 vaes = ${root}/vaes
 saves = /home/me/Pictures/ai
+extensions = .safetensors
+	.ckpt
+	.pt
 
 [LORAS]
 files = /home/me/src/stable-diffusion/tinydiffusioncpu/loras/add_detail.safetensors

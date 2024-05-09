@@ -15,6 +15,8 @@ class Config:
 	save_name = ""
 	save = ""
 
+	extensions = (".safetensors", ".ckpt", ".pt")
+
 	pos_prompt = ""
 	neg_prompt = ""
 
@@ -82,6 +84,7 @@ def write_config():
 		"embeddings": path.join("${root}", "embeddings"),
 		"vaes": path.join("${root}", "vaes"),
 		"saves": Config.save_dir,
+		"extensions": "\n".join(Config.extensions),
 	}
 	config["LORAS"] = {
 		"files": "\n".join(Config.lora_files),
@@ -157,6 +160,9 @@ def read_config():
 		Config.embed_dir = config.get("PATHS", "embeddings", fallback=Config.embed_dir)
 		Config.vae_dir = config.get("PATHS", "vaes", fallback=Config.vae_dir)
 		Config.save_dir = config.get("PATHS", "saves", fallback=Config.save_dir)
+		if config.get("PATHS", "extensions") != "":
+			# allow commas/quotes
+			Config.extensions = tuple(config.get("PATHS", "extensions").replace(",", "").replace('"', "").replace("'", "").split("\n"))
 
 		Config.lora_default_weight = config.getfloat("LORAS", "default_weight", fallback=Config.lora_default_weight)
 		if config.get("LORAS", "files") != "":
@@ -180,7 +186,7 @@ def read_config():
 		Config.tcd = config.get("SPECIAL", "tcd", fallback=Config.tcd)
 		Config.lcm = config.get("SPECIAL", "lcm", fallback=Config.lcm)
 
-		Config.vae_taesd = config.get("VAE", "taesd", fallback=Config.vae_taesd)
+		Config.vae_taesd = config.getboolean("VAE", "taesd", fallback=Config.vae_taesd)
 		Config.vae = config.get("VAE", "vae", fallback=Config.vae)
 	except Exception:
 		bad_config("Missing [SECTION], unknown ${key}, or using a string where a number is expected in config.ini")
