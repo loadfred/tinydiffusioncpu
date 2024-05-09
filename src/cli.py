@@ -200,12 +200,12 @@ def cli():
 				case 5:
 					vaes = []
 					print(
-						"-0- Enter VAE path [.safetensors, .pt]",
+						"-0- Enter VAE path [.safetensors, .pt, .ckpt]",
 						"-1- TAESD (less ram, faster, worse images, bad faces",
 					sep="\n")
 					for subdir, dirs, files in walk(Config.vae_dir):
 						for file in files:
-							if path.splitext(file)[1] in (".safetensors", ".pt"):
+							if path.splitext(file)[1] in (".safetensors", ".pt", ".ckpt"):
 								vaes.append(path.join(subdir, file))
 								print(f"-{len(vaes)+1}- {path.splitext(file)[0]}")
 					print(f"-{len(vaes)+2}- DISABLE active VAE")
@@ -243,8 +243,8 @@ def cli():
 							elif not path.isfile(vae_path):
 								print("VAE doesn't exist")
 								continue
-							elif path.splitext(vae_path)[1] not in (".safetensors", ".pt"):
-								print("VAE isn't .safetensors or .pt")
+							elif path.splitext(vae_path)[1] not in (".safetensors", ".pt", ".ckpt"):
+								print("VAE isn't .safetensors, .pt, or .ckpt")
 								continue
 							Config.vae = vae_path
 							break
