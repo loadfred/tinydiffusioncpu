@@ -54,7 +54,7 @@ def cli():
 				f"\t({Config.width}/{Config.height})",
 			"-8-- Image Save Directory",
 				f"\t{Config.save_dir}",
-			"-9-- Config (save/reload)",
+			"-9-- Config (save/reload/custom)",
 			"-10- Exit",
 		sep="\n")
 		while True:
@@ -297,8 +297,9 @@ def cli():
 				case 9:
 					print(
 						"-0- Save Config [loads on start]",
-						"-1- Reload Config",
-						"-2- Back",
+						f"-1- Reload Config [{path.join(Config.config_dir, 'config.ini')}]",
+						"-2- Load Custom Config",
+						"-3- Back",
 					sep="\n")
 					choice = strict_input(int, 0, "Number (0): ")
 					match choice:
@@ -306,6 +307,39 @@ def cli():
 							write_config()
 						case 1:
 							read_config()
+						case 2:
+							configs = []
+							print("-0- Enter Config Path [.ini]")
+							for subdir, dirs, files in walk(Config.config_dir):
+								for file in files:
+									if path.splitext(file)[1] in (".ini", ".bak"):
+										configs.append(path.join(subdir, file))
+										print(f"-{len(configs)}- {file}")
+							print(f"-{len(configs)+1}- Back")
+							while True:
+								choice = strict_input(int, 0, "Config (0): ")
+								if choice < len(configs)+1 and choice > 0:
+									read_config(configs[choice-1])
+									break
+								elif choice == 0:
+									config_path = strict_input(
+										str, "",
+										"Enter Config Path: "
+									)
+									if config_path == "":
+										print("Empty input")
+										continue
+									elif not path.isfile(config_path):
+										print("Config doesn't exist")
+										continue
+									elif path.splitext(config_path)[1] not in (".ini", ".bak"):
+										print("Config isn't [.ini]")
+										continue
+									read_config(config_path)
+									break
+								else:
+									# go back
+									break
 					break
 				case 10:
 					exit()

@@ -10,6 +10,7 @@ class Config:
 	lora_dir = path.join(root_dir, "loras") # ONLY USED FOR TCD/LCM, NO OTHER LORA SUPPORT
 	embed_dir = path.join(root_dir, "embeddings")
 	vae_dir = path.join(root_dir, "vaes")
+	config_dir = path.join(root_dir, "configs") # wouldn't make sense to include this in config.ini
 
 	save_dir = path.join(path.expanduser("~"), "Pictures")
 	save_name = ""
@@ -57,7 +58,7 @@ def set_save():
 def write_config():
 	# write to config.ini
 	# called when option chosen
-	config_file = path.join(Config.root_dir, "configs", "config.ini")
+	config_file = path.join(Config.config_dir, "config.ini")
 	config = ConfigParser()
 
 	config["PROMPT"] = {
@@ -103,34 +104,44 @@ def write_config():
 	}
 
 	if path.isfile(config_file):
-		rename(config_file, path.join(Config.root_dir, "configs", "config.ini.bak"))
+		rename(config_file, path.join(Config.config_dir, "config.ini.bak"))
 	with open(config_file, "w") as file:
 		config.write(file)
 		print(f"Saved config -> {config_file}")
 
 
-def read_config():
+def read_config(config_file=""):
 	# read from config.ini
 	# set variables in class Config
 	# called on start
 
 	def bad_config(msg):	
-		print(
-			msg,
-			"Fix config or resave it",
-		sep="\n")
-		choice = input("Load and save default config? (Y/n): ")
-		if choice.lower() in ("", "y"):
-			write_config()
-			return
+		if config_file == path.join(Config.config_dir, "config.ini"):
+			print(
+				msg,
+				"Fix config or resave it",
+			sep="\n")
+			choice = input("Load and save default config? (Y/n): ")
+			if choice.lower() in ("", "y"):
+				write_config()
+				return
+			else:
+				print("Exiting, fix your config.ini")
+				exit()
 		else:
-			exit()
+			print(
+				msg,
+				"Fix your custom config",
+			sep="\n")
+			return
 
-	config_file = path.join(Config.root_dir, "configs", "config.ini")
+	if config_file == "":
+		config_file = path.join(Config.config_dir, "config.ini")
 	config = ConfigParser(interpolation=ExtendedInterpolation())
 
 	# config doesn't exist
 	if not path.isfile(config_file):
+		print("Config doesn't exist, saving new config...")
 		write_config()
 		return
 
