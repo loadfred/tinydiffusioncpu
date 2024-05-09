@@ -216,7 +216,7 @@ def cli():
 							Config.vae = vaes[choice-2]
 							break
 						elif choice == 1:
-							if not Config.vae_taesd:
+							if Config.vae_taesd == False:
 								yn = strict_input(
 									str, "y",
 									"Enable TAESD (Y/n): "

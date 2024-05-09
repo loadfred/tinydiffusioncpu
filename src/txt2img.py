@@ -38,7 +38,7 @@ def sd15():
 	# pipe = StableDiffusionPipeline.from_pretrained(**pipe_args)
 	pipe = StableDiffusionPipeline.from_single_file(**pipe_args)
 
-	if Config.vae_taesd:
+	if Config.vae_taesd == True:
 		from diffusers import AutoencoderTiny
 		pipe.vae = AutoencoderTiny.from_pretrained("madebyollin/taesd", torch_dtype=torch.float32)
 		print("Set VAE: TAESD")
