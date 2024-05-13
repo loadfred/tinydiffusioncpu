@@ -4,7 +4,7 @@ Stable Diffusion for CPU only, CLI only, uses [TCD](https://github.com/jabir-zhe
 Uses [Diffusers](https://huggingface.co/docs/diffusers/tutorials/tutorial_overview) with Python
 
 ## Dependencies
-- python 3.8 or greater
+- python 3.10 or greater
   - pip modules automatically installed with **start** script
 - curl
   - used for downloading TCD/LCM safetensors with **start** script
@@ -12,7 +12,7 @@ Uses [Diffusers](https://huggingface.co/docs/diffusers/tutorials/tutorial_overvi
   - used to clone this repository
  
 ## Install & Run
-Windows + Linux + FreeBSD support!
+Windows + Linux support!
 
 Open your terminal
 
@@ -28,7 +28,7 @@ Then execute the **start** script
 
 `start.bat`
 
-### Linux & FreeBSD
+### Linux
 
 `./start.sh`
 
