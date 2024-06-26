@@ -1,6 +1,7 @@
 compel>=2.0.2
 diffusers>=0.27.2
 peft>=0.10.0
+setuptools>=70.1.1
 torch>=2.3.0+cpu
 transformers>=4.40.1
 --extra-index-url https://download.pytorch.org/whl/cpu
